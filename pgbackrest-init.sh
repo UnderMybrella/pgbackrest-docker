@@ -38,7 +38,7 @@ POSTGRES_CONF="$PGDATA/postgresql.conf"
 
 # Check if file is not empty
 if [ ! -s $PGBACKREST_CONF ]; then
-    tee $PGBACKREST_CONF << EOF  
+    cat << EOF > "$PGBACKREST_CONF"
 [$PGBACKREST_STANZA]
 pg1-path=$PGDATA
 
@@ -55,7 +55,7 @@ EOF
 fi
 
 # Don't try and write if the config is read only
-[ -w $POSTGRES_CONF ] && tee $POSTGRES_CONF << EOF
+[ -w $POSTGRES_CONF ] && cat << EOF >> "$POSTGRES_CONF"
 archive_command = 'pgbackrest --stanza=$PGBACKREST_STANZA archive-push %p'
 archive_mode = on
 max_wal_senders = 3
@@ -64,4 +64,5 @@ EOF
 pgbackrest --stanza=$PGBACKREST_STANZA --log-level-console=info stanza-create
 
 # Check that everything has gone correctly
-pgbackrest --stanza=$PGBACKREST_STANZA --log-level-console=info check
+# Note, this doesn't work because the database doesn't restart before we can do our checks... hm
+# pgbackrest --stanza=$PGBACKREST_STANZA --log-level-console=info check
