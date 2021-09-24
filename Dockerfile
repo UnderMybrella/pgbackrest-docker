@@ -18,7 +18,7 @@ RUN set -eux; \
         chown postgres:postgres /etc/pgbackrest/pgbackrest.conf; \
         chown postgres:postgres /etc/pgbackrest/conf.d;
 
-ENV PGBACKREST_REPO /var/lib/pgbackrest/data
+ENV BACKREST_REPO /var/lib/pgbackrest/data
 RUN mkdir -p "$BACKREST_REPO" && chown -R postgres:postgres "$BACKREST_REPO" && chmod 777 "$BACKREST_REPO"
 VOLUME /var/lib/pgbackrest/data
 
