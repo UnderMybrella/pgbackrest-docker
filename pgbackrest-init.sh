@@ -25,7 +25,7 @@ file_env() {
 }
 
 file_env 'BACKREST_STANZA'
-file_env 'BACKREST_REPO' '/var/lib/pgbackrest/data'
+file_env 'BACKREST_REPO'
 file_env 'BACKREST_CIPHER_PASS'
 file_env 'BACKREST_CIPHER_TYPE' 'aes-256-cbc'
 file_env 'BACKREST_COMPRESS_TYPE' 'zst'
@@ -33,7 +33,7 @@ file_env 'BACKREST_COMPRESS_LEVEL' '6' #pgbackrest says that this is allowed bet
 file_env 'BACKREST_RETENTION_FULL' '1'
 file_env 'BACKREST_RETENTION_DIFF' '7'
 
-BACKREST_CONF="/etc/pgbackrest/conf.d/default.conf"
+BACKREST_CONF="$PGBACKREST_CONFIG_INCLUDE_PATH/default.conf"
 POSTGRES_CONF="$PGDATA/postgresql.conf"
 
 # Check if file is not empty
