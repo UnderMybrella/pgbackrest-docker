@@ -18,12 +18,12 @@ RUN set -eux; \
         chown postgres:postgres /etc/pgbackrest/pgbackrest.conf; \
         chown postgres:postgres /etc/pgbackrest/conf.d;
 
-ENV BACKREST_REPO /var/lib/pgbackrest/data
-RUN mkdir -p "$BACKREST_REPO" && chown -R postgres:postgres "$BACKREST_REPO" && chmod 777 "$BACKREST_REPO"
-VOLUME /var/lib/pgbackrest/data
-
 ENV PGBACKREST_CONFIG_INCLUDE_PATH /var/lib/pgbackrest/conf.d
 ENV PGBACKREST_CONFIG /var/lib/pgbackrest/pgbackrest.conf
+
+ENV BACKREST_REPO /var/lib/pgbackrest/data
+RUN mkdir -p "$BACKREST_REPO" && chown -R postgres:postgres "$BACKREST_REPO" && chmod 777 "$BACKREST_REPO"
+VOLUME /var/lib/pgbackrest
 
 COPY pgbackrest-init.sh /docker-entrypoint-initdb.d/
 RUN chmod a+rx /docker-entrypoint-initdb.d/pgbackrest-init.sh
