@@ -4,7 +4,7 @@ FROM postgres:12-buster
 
 RUN set -eux; \
         apt-get update; \
-        apt-get -y install pgbackrest; \
+        apt-get -y install pgbackrest inotify-tools; \
         rm -rf /var/lib/apt/lists/*;
 
 ENV PGBACKREST_DIR /var/lib/pgbackrest
@@ -28,3 +28,11 @@ VOLUME ${PGBACKREST_DIR}
 
 COPY pgbackrest-init.sh /docker-entrypoint-initdb.d/
 RUN chmod a+rx /docker-entrypoint-initdb.d/pgbackrest-init.sh
+
+
+COPY pgbackrest-wrapper.sh /usr/local/bin/
+RUN chmod a+rx /pgbackrest-wrapper.sh
+
+ENTRYPOINT ["pgbackrest-wrapper.sh"]
+
+# CMD ["postgres"]
