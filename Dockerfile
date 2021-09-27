@@ -31,7 +31,7 @@ RUN chmod a+rx /docker-entrypoint-initdb.d/pgbackrest-init.sh
 
 
 COPY pgbackrest-wrapper.sh /usr/local/bin/
-RUN chmod a+rx /pgbackrest-wrapper.sh
+RUN chmod a+rx /usr/local/bin/pgbackrest-wrapper.sh
 
 ENTRYPOINT ["pgbackrest-wrapper.sh"]
 
