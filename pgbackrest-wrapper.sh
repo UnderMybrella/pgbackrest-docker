@@ -1,4 +1,13 @@
 #!/usr/bin/env bash
+
+# Before we run our entry script, we want to check to see if *our* init hasn't run yet, but psql is set up
+if [[ -s "$PGDATA/PG_VERSION" && ! -s "$PGBACKREST_CONFIG_INCLUDE_PATH/default.conf" ]]; then
+    echo "PostgreSQL has already run setup, but we haven't yet"
+
+    /usr/local/bin/pgbackrest-init.sh
+fi
+
+
 # Run our entry script with any arguments we receive
 /usr/local/bin/docker-entrypoint.sh "$@"
 

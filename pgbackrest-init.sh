@@ -36,6 +36,21 @@ file_env 'BACKREST_RETENTION_DIFF' '7'
 BACKREST_CONF="$PGBACKREST_CONFIG_INCLUDE_PATH/default.conf"
 POSTGRES_CONF="$PGDATA/postgresql.conf"
 
+if [[ -n "$BACKREST_STANZA" ]]; then
+    >&2 echo "BACKREST_STANZA not defined!"
+    exit 1
+fi
+
+if [[ -n "$BACKREST_REPO" ]]; then
+    >&2 echo "BACKREST_REPO not defined!"
+    exit 2
+fi
+
+if [[ -n "$BACKREST_CIPHER_PASS" ]]; then
+    >&2 echo "BACKREST_CIPHER_PASS not defined!"
+    exit 3
+fi
+
 # Check if file is not empty
 if [ ! -s $BACKREST_CONF ]; then
     cat << EOF > "$BACKREST_CONF"
