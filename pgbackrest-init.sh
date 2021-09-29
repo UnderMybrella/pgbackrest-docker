@@ -76,7 +76,11 @@ archive_mode = on
 max_wal_senders = 3
 EOF
 
-pgbackrest --stanza=$BACKREST_STANZA --log-level-console=info stanza-create
+if [ "$(id -u)" = '0' ]; then
+    su postgres --session-command "pgbackrest --stanza=$BACKREST_STANZA --log-level-console=info stanza-create"
+else
+    pgbackrest --stanza=$BACKREST_STANZA --log-level-console=info stanza-create
+fi
 
 # Check that everything has gone correctly
 # Note, this doesn't work because the database doesn't restart before we can do our checks... hm

@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-touch "/tmp/dev.sibr.docker.entrypoint"
 
 RERUN_INIT=0
 
@@ -13,14 +12,10 @@ fi
 
 if [[ $RERUN_INIT -eq 0 ]]; then
     /usr/local/bin/docker-entrypoint.sh "$@"
-else 
-    if [ "$(id -u)" = '0' ]; then
-        exec gosu postgres "$BASH_SOURCE" "$@"
-    fi
-
+else
     # Run our entry script with any arguments we receive
-    /usr/local/bin/docker-entrypoint.sh "$@" &
-    DOCKER_PID="$!"
+    ARGS="$@"
+    su postgres --session-command '/usr/local/bin/docker-entrypoint.sh "$ARGS"'
 
     echo "Waiting on PostgreSQL..."
     until pg_isready; do sleep 1; done
@@ -29,8 +24,7 @@ else
 
     /docker-entrypoint-initdb.d/pgbackrest-init.sh
 
-    pg_ctl stop
-    wait $DOCKER_PID
+    su postgres --session-command "pg_ctl --wait stop"
 fi
 
 # To allow for pgbackrest restoring, we want to check if a lock file exists. 
