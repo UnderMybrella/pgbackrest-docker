@@ -1,17 +1,31 @@
 #!/usr/bin/env bash
 
-# Run our entry script with any arguments we receive
-/usr/local/bin/docker-entrypoint.sh "$@" &
-DOCKER_PID="$!"
+touch "/tmp/dev.sibr.docker.entrypoint"
+
+RERUN_INIT=0
 
 # We want to check to see if *our* init hasn't run yet, but psql is set up
-if [[ -s "$PGDATA/PG_VERSION" && ! -s "$PGBACKREST_CONFIG_INCLUDE_PATH/default.conf" ]]; then
-    echo "PostgreSQL has already run setup, but we haven't yet"
+if [ -s "$PGDATA/PG_VERSION" ]; then
+    if [[ ! -s "$PGBACKREST_CONFIG_INCLUDE_PATH/default.conf" ]]; then
+        RERUN_INIT=1
+    fi
+fi
+
+if [[ $RERUN_INIT -eq 0 ]]; then
+    /usr/local/bin/docker-entrypoint.sh "$@"
+else 
+    # Run our entry script with any arguments we receive
+    /usr/local/bin/docker-entrypoint.sh "$@" &
+    DOCKER_PID="$!"
+
+    echo "Waiting on PostgreSQL..."
+    inotifywait -e create "/var/run/postgresql/"
+
+    echo "PostgreSQL has already run setup, but we haven't yet. Running init..."
 
     /docker-entrypoint-initdb.d/pgbackrest-init.sh
 
-    # We don't wait here, to allow ourselves to reload and restart
-else 
+    pg_ctl stop
     wait $DOCKER_PID
 fi
 
