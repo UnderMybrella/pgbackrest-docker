@@ -19,13 +19,13 @@ else
     DOCKER_PID="$!"
 
     echo "Waiting on PostgreSQL..."
-    inotifywait -e create "/var/run/postgresql/"
+    until pg_isready; do sleep 1; done
 
     echo "PostgreSQL has already run setup, but we haven't yet. Running init..."
 
     /docker-entrypoint-initdb.d/pgbackrest-init.sh
 
-    pg_ctl stop
+    su --session-command "pg_ctl stop" postgres
     wait $DOCKER_PID
 fi
 
