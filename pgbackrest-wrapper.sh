@@ -14,6 +14,10 @@ fi
 if [[ $RERUN_INIT -eq 0 ]]; then
     /usr/local/bin/docker-entrypoint.sh "$@"
 else 
+    if [ "$(id -u)" = '0' ]; then
+        exec gosu postgres "$BASH_SOURCE" "$@"
+    fi
+
     # Run our entry script with any arguments we receive
     /usr/local/bin/docker-entrypoint.sh "$@" &
     DOCKER_PID="$!"
@@ -25,7 +29,7 @@ else
 
     /docker-entrypoint-initdb.d/pgbackrest-init.sh
 
-    su --session-command "pg_ctl stop" postgres
+    pg_ctl stop
     wait $DOCKER_PID
 fi
 
