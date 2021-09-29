@@ -4,7 +4,7 @@
 if [[ -s "$PGDATA/PG_VERSION" && ! -s "$PGBACKREST_CONFIG_INCLUDE_PATH/default.conf" ]]; then
     echo "PostgreSQL has already run setup, but we haven't yet"
 
-    /usr/local/bin/pgbackrest-init.sh
+    /docker-entrypoint-initdb.d/pgbackrest-init.sh
 fi
 
 
