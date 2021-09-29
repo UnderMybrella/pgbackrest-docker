@@ -14,8 +14,7 @@ if [[ $RERUN_INIT -eq 0 ]]; then
     /usr/local/bin/docker-entrypoint.sh "$@"
 else
     # Run our entry script with any arguments we receive
-    ARGS="$@"
-    su postgres --session-command '/usr/local/bin/docker-entrypoint.sh "$ARGS"'
+    /usr/local/bin/docker-entrypoint.sh "$@" &
 
     echo "Waiting on PostgreSQL..."
     until pg_isready; do sleep 1; done
