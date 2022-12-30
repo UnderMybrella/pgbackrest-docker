@@ -56,6 +56,8 @@ if [ ! -s $BACKREST_CONF ]; then
     cat << EOF > "$BACKREST_CONF"
 [$BACKREST_STANZA]
 pg1-path=$PGDATA
+pg1-database=$POSTGRES_DB
+pg1-host-user=$POSTGRES_USER
 
 repo1-cipher-pass=$BACKREST_CIPHER_PASS
 repo1-cipher-type=$BACKREST_CIPHER_TYPE
