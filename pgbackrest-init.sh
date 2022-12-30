@@ -57,7 +57,7 @@ if [ ! -s $BACKREST_CONF ]; then
 [$BACKREST_STANZA]
 pg1-path=$PGDATA
 pg1-database=$POSTGRES_DB
-pg1-host-user=$POSTGRES_USER
+pg1-user=$POSTGRES_USER
 
 repo1-cipher-pass=$BACKREST_CIPHER_PASS
 repo1-cipher-type=$BACKREST_CIPHER_TYPE
@@ -81,7 +81,7 @@ EOF
 if [ "$(id -u)" = '0' ]; then
     su postgres --session-command "pgbackrest --stanza=$BACKREST_STANZA --log-level-console=info stanza-create"
 else
-    pgbackrest --stanza=$BACKREST_STANZA --log-level-console=info stanza-create
+    pgbackrest --stanza="$BACKREST_STANZA" --log-level-console=info stanza-create
 fi
 
 # Check that everything has gone correctly
